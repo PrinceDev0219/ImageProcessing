@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Button,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { updateProfile, getProfile, imageUpload } from "../../api/api";
@@ -15,11 +16,12 @@ import Language from "../../assets/Language.json";
 import { useGlobalState } from "state-pool";
 import * as ImagePicker from "expo-image-picker";
 import DatePicker from "react-native-datepicker";
+import * as FileSystem from "expo-file-system";
 
 const i18n = new I18n(Language);
 
 const SettingsScreen = () => {
-  const [ locale, setLocale, updateLocale ] = useGlobalState("locale");
+  const [locale, setLocale, updateLocale] = useGlobalState("locale");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,17 +39,33 @@ const SettingsScreen = () => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
+    let fileInfo = await FileSystem.getInfoAsync(result.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    // console.log(fileInfo);
 
     if (!result.cancelled) {
       setImage(result.uri);
-      let formData = new FormData();
-      formData.append("fileName", result.uri);
-      formData.append("contentType", result.type);
-      formData.append("fileKey", "avatars/" + new Date().getTime().toString());
-      imageUpload(formData).then((res) => {
-        console.log("imageupload-------------------" + res.data);
+
+      console.log(result)
+      // return
+
+      let filename = (result.uri).split('/').pop();
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+      
+      const data = new FormData();
+      data.append('fileData', { uri: result.uri, name: filename, type });
+      // console.log("start");
+      // data.append("name", "scan_result_" + new Date().getTime());
+      // console.log("sec");
+      // data.append("fileData", response);
+      // console.log("thr");
+      // console.log(JSON.stringify(data));
+      
+      imageUpload(data).then((res) => {
+        console.log("imageupload-------------------" + res.data.filepath);
+
       });
     }
   };
@@ -99,7 +117,7 @@ const SettingsScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0049ee" }}>
       <View style={{ ...styles.row, ...{ justifyContent: "flex-start" } }}>
         <Text style={{ fontSize: 17, color: "white", fontWeight: "bold" }}>
-        {i18n.t("PAGES.Profile")}
+          {i18n.t("PAGES.Profile")}
         </Text>
       </View>
       <View style={styles.avtarContainer}>
@@ -112,6 +130,15 @@ const SettingsScreen = () => {
             />
           )}
         </View>
+        {/* <View>
+          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 200, height: 200 }}
+            />
+          )}
+        </View> */}
         <View style={styles.row}>
           <TextInput
             placeholderTextColor="#8b9cb5"
@@ -121,7 +148,7 @@ const SettingsScreen = () => {
             onChangeText={(txt) => setFirstName(txt)}
           />
         </View>
-        <View style={styles.row}>      
+        <View style={styles.row}>
           <TextInput
             placeholderTextColor="#8b9cb5"
             style={{
@@ -210,7 +237,9 @@ const SettingsScreen = () => {
               onUpdate();
             }}
           >
-            <Text style={styles.buttonTextStyle}>{i18n.t("BUTTONS.Update")}</Text>
+            <Text style={styles.buttonTextStyle}>
+              {i18n.t("BUTTONS.Update")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

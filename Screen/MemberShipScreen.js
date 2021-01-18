@@ -1,4 +1,4 @@
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -9,28 +9,142 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Modal,
+  Pressable
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Loader from "./Components/Loader";
+import { initStripe, useStripe } from "@stripe/stripe-react-native";
+import { payment, memberShipSave } from "../api/api";
+import { Linking } from "react-native-web";
+import { useGlobalState } from "state-pool";
 
 const MemberShipScreen = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState({});
+  const { initPaymentSheet, presentPaymentSheet, confirmPaymentSheetPayment  } = useStripe();
+  const [ paymentMethod, setPaymentMethod ] = useState();
+  const [userID, setUserID, updateUserID] = useGlobalState("userID");
 
-  const memberShip = (type) => {
+  const memberShip = async (type) => {
     const MEMBERSHIPTYPE = {
-      BASIC: 0,
-      PRO: 4.99,
-      ULTRA: 8.99,
-      MEGA: 12.99
+      BASIC: {name: "BASIC", value: 0},
+      PRO: {name: "PRO", value: 4.99},
+      ULTRA: {name: "ULTRA", value: 8.99},
+      MEGA: {name: "MEGA", value: 12.99}
     };
-    console.log(MEMBERSHIPTYPE[type]);
+    setAmount(MEMBERSHIPTYPE[type].value);
+    setName(MEMBERSHIPTYPE[type].name);
+    setLoading(true);
+    await initializePaymentSheet(MEMBERSHIPTYPE[type].name, MEMBERSHIPTYPE[type].value);    
   }
+
+  const fetchPaymentSheetParams = async (name, value) => {
+    const response = await fetch("http://10.10.13.226:5000/payment", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({amount: value, name: name})
+    });
+    const data = await response.json();
+    return data;
+  };
+
+  const initializePaymentSheet = async (name, value) => {
+    const data = await fetchPaymentSheetParams(name, value);
+    
+    try {
+      console.log("start==", data)
+      const initSheet = await initPaymentSheet({
+        paymentIntentClientSecret: data.clientSecret,
+        customerId: data.customer,
+        customerEphemeralKeySecret: data.ephemeralKey,
+        style: 'automatic',
+        customFlow: true,
+        merchantDisplayName: 'ScanToGo',
+      });
+      console.log("initsheet==", initSheet)
+      if(initSheet.error) {
+        console.log(initSheet.error)
+        return alert(initSheet.error.message);
+      }     
+      setLoading(false);
+      const { error } = await presentPaymentSheet({clientSecret: data.clientSecret});
+      console.log(error)
+      if (error) {
+        alert(`Error code: ${error.code}`, error.message);
+      } else {
+        setModalVisible(false);
+        setModalVisible(true)
+      }
+      }
+    catch(e) {
+
+      console.log("catch-",e)
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    setLoading(true);
+    const response = await confirmPaymentSheetPayment();
+        if (response.error) {
+            alert(`Error ${response.error.code}`);
+            console.error(response.error.message);
+        } else {
+            memberShipSave({user_id: userID, packageType: name, price: amount, quantity: 1000}).then((res) => {
+              if(res == "success") console.log("Payment----Okay");
+              else console.log("Payment----failed");
+            })
+            setModalVisible(false)
+            setLoading(false);
+            alert('Purchase completed!');
+        }
+  };
 
   return (
       <View style={styles.mainBody}>
         <Loader loading={loading} />
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{fontSize:18, fontWeight:'bold', marginBottom:10}}>Checkout</Text>
+            <View style={{width:"100%"}}>
+              <Text style={styles.cardTitle}>{name}</Text>
+              <Text style={styles.cardSubTitle}>€{amount}/mo</Text>
+              <View style={{flexDirection:"row", width:"60%", justifyContent:"space-between"}}>
+              <TouchableOpacity
+                style={{width:"45%", backgroundColor:"#0049EE", margin:"auto", paddingVertical:5, paddingHorizontal:5, borderRadius:5}}
+                activeOpacity={0.5}
+                onPress={openPaymentSheet}
+              >
+                <Text style={styles.cardButtonTextStyle}>Checkout</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{width:"45%", backgroundColor:"#0049EE", margin:"auto", paddingVertical:5, paddingHorizontal:5, borderRadius:5}}
+                activeOpacity={0.5}
+                onPress={()=>setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.cardButtonTextStyle}>Cancel</Text>
+              </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={
@@ -273,4 +387,45 @@ const styles = StyleSheet.create({
     height: 25,
     color: "white",
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });

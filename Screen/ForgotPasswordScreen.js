@@ -77,7 +77,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       .then(async (res) => {
         setLoading(false);
         console.log(res);
-        if (res.status === false) {
+        if (res.status === true) {
           setModalVisible(true);
         } else setErrortext("Please check your email id or password");
       })

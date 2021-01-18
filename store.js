@@ -20,7 +20,8 @@ const Store = {
     indexPage: 0, // page number for pagination
     perPage: 10, // pagination number
     fileName: '', // search filename
-    locale: "en-US"
+    locale: "en-US",
+    arrayType: []
 }
 
 export default Store;

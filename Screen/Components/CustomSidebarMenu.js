@@ -21,7 +21,6 @@ const i18n = new I18n(Language);
 
 const CustomSidebarMenu = (props) => {
   const [ locale, setLocale, updateLocale ] = useGlobalState("locale");
-  alert(locale);
   i18n.locale = locale ? locale : "en-US";
   i18n.enableFallback = true;
   return (

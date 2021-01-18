@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import { I18n } from 'i18n-js';
 import Language from './assets/Language.json';
+import { StripeProvider } from '@stripe/stripe-react-native';
+
 
 const Stack = createStackNavigator();
 
@@ -27,59 +29,49 @@ const Auth = () => {
 
   // Stack Navigator for Login and Sign up Screen
   return (
-    <Stack.Navigator initialRouteName="LoginScreen">
-      <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{
-          title: 'Register', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#0049EE', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-      <Stack.Screen
-        name="ForgotPasswordScreen"
-        component={ForgotPasswordScreen}
-        options={{
-          title: 'ForgotPassword', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#0049EE', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-    </Stack.Navigator>
+    <StripeProvider publishableKey="pk_test_v22LxQNp31q9KnVYBgybs1V400W3Ovq4UA">
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
+          options={{
+            title: 'Register', //Set Header Title
+            headerStyle: {
+              backgroundColor: '#0049EE', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ForgotPasswordScreen"
+          component={ForgotPasswordScreen}
+          options={{
+            title: 'ForgotPassword', //Set Header Title
+            headerStyle: {
+              backgroundColor: '#0049EE', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+      </Stack.Navigator>
+    </StripeProvider>
   );
 };
 
 /* Switch Navigator for those screens which needs to be switched only once
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
-
-  // const i18n = new I18n(Language);
-  // i18n.locale = Localization.locale;
-  // i18n.enableFallback = true;
-
-  // const setLocal = async () => {
-  //   await AsyncStorage.setItem('locale', i18n.locale);
-  //   console.log(i18n.t("BUTTONS.ForgotPassword"));
-  // }
-
-  // setLocal();
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SplashScreen">

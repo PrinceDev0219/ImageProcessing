@@ -12,8 +12,22 @@ import { getFiles } from "../../api/api";
 import { useGlobalState } from "state-pool";
 import Loader from "../Components/Loader";
 import { useNavigation } from "@react-navigation/native";
+import GDrive from "expo-google-drive-api-wrapper";
 
 let flatList = null;
+
+const _initGoogleDrive = async () => {
+  // Getting Access Token from Google
+  let token = await GoogleSignin.getTokens();
+  if (!token) return alert('Failed to get token');
+  console.log('res.accessToken =>', token.accessToken);
+  // Setting Access Token
+  GDrive.setAccessToken(token.accessToken);
+  // Initializing Google Drive and confirming permissions
+  GDrive.init();
+  // Check if Initialized
+  return GDrive.isInitialized();
+};
 
 const HomeScreen = () => {
   const [fileData, setFileData, updateFileData] = useGlobalState("fileData");
@@ -28,6 +42,8 @@ const HomeScreen = () => {
 
   const navigation = useNavigation();
 
+  // _initGoogleDrive();
+
   useEffect(() => {
     updateSearchFlag((old) => {
       return false;
@@ -39,20 +55,20 @@ const HomeScreen = () => {
       return 0;
     });
     navigation.closeDrawer();
-    setLoading(true);
-    getFiles(userID, fileName, 0, perPage)
-      .then((res) => {
-        setLoading(false);
-        updateFileData((old) => {
-          return res.data;
-        });
-        updateFileCount((old) => {
-          return res.count;
-        });
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    // setLoading(true);
+    // getFiles(userID, fileName, 0, perPage)
+    //   .then((res) => {
+    //     setLoading(false);
+    //     updateFileData((old) => {
+    //       return res.data;
+    //     });
+    //     updateFileCount((old) => {
+    //       return res.count;
+    //     });
+    //   })
+    //   .catch(() => {
+    //     setLoading(false);
+    //   });
   }, []);
 
   const nextPage = () => {
@@ -123,30 +139,9 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Loader loading={loading} />
-      <FlatList
-        data={fileData}
-        ref={(el) => {
-          flatList = el;
-        }}
-        ListHeaderComponent={() => {
-          return null;
-        }}
-        renderItem={({ item, index, separators }) => {
-          return <FileDetailItem data={item} index={index} />;
-        }}
-        keyExtractor={(item, index) => index.toString()}
-        onRefresh={() => {
-          reloadPage();
-        }}
-        refreshing={false}
-        onEndReached={nextPage}
-        onEndReachedThreshold={0.1}
-      />
-      {fileData.length === 0 && !loading ? (
-        <View style={styles.emptyContainer}>
-          <Text>There is'nt any result.</Text>
-        </View>
-      ) : null}
+      <View>
+        
+      </View>
     </SafeAreaView>
   );
 };
