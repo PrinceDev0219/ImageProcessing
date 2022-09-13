@@ -1,0 +1,104 @@
+{
+    "en-US" : {
+        "PAGES" : {
+            "Login" : "Login",
+            "Register" : "Register",
+            "Profile" : "Profile",
+            "Forgot" : "Forgot Password",
+            "Reset" : "Password Reset",
+            "Home" : "Home",
+            "Membership" : "Membership",
+            "LogOut" : "Log Out",
+            "Settings" : "Settings"
+        },
+        "BUTTONS" : {
+            "Login" : "LOGIN",
+            "Register" : "REGISTER",
+            "LoginNow" : "LOGIN NOW",
+            "CreateAccount" : "Create Account",
+            "ForgotPassword" : "Forgot Password?",
+            "SendRequest" : "SEND REQUEST",
+            "Reset" : "RESET",
+            "Cancel" : "Cancel",
+            "Confirm" : "Confirm", 
+            "Update" : "UPDATE"
+        },
+        "INPUTS" : {
+            "FirstName" : "Enter First Name",
+            "LastName" : "Enter Last Name",
+            "Email" : "Enter Email",
+            "PhoneNumber" : "Enter PhoneNumber",
+            "Password" : "Enter Password",
+            "VerifyCode" : "Enter Verify Code",
+            "TopSearch" : "Search file",
+            "Address" : "Enter Address"
+        },
+        "ALERTS" : {
+            "FirstNameInputAlert" : "Please fill First Name",
+            "LastNameInputAlert" : "Please fill Last Name",
+            "EmailInputAlert" : "Please fill Email",
+            "PhoneNumberInputAlert" : "Please fill PhoneNumber",
+            "PasswordInputAlert" : "Please fill Password",
+            "VerifyCodeInputAlert" : "Please fill Verify Code",
+            "RegistrationSuccessful" : "Registration Successful",
+            "WrongInfo" : "Please check your Email or Password",
+            "PasswordReset" : "Password Reset Sucessful!",
+            "PasswordLength" : "Password length has to logger than 6",
+            "ProfileSuccess" : "Update your profile successfully",
+            "ValidateAlert" : "Please check your input data",
+            "Logout" : "Logout",
+            "LogoutConfirm" : "Are you sure? You want to logout?"
+        }
+    },
+    "en-DE" : {
+        "PAGES" : {
+            "Login" : "Einloggen",
+            "Register" : "Registrieren",
+            "Profile" : "Profil",
+            "Forgot" : "Passwort vergessen",
+            "Reset" : "Passwort zurücksetzen",
+            "Home" : "Zu Hause",
+            "Membership" : "Mitgliedschaft",
+            "LogOut" : "Abmelden",
+            "Settings" : "Einstellungen"
+        },
+        "BUTTONS" : {
+            "Login" : "Einloggen",
+            "Register" : "REGISTRIEREN",
+            "LoginNow" : "JETZT ANMELDEN",
+            "CreateAccount" : "Konto erstellen",
+            "ForgotPassword" : "Passwort vergessen?",
+            "SendRequest" : "ANFRAGE SENDEN",
+            "Reset" : "ZURÜCKSETZEN",
+            "Cancel" : "Absagen",
+            "Confirm" : "Bestätigen", 
+            "Update" : "Aktualisierung"
+        },
+        "INPUTS" : {
+            "FirstName" : "Vornamen eingeben",
+            "LastName" : "Nachnamen eingeben",
+            "Email" : "E-Mail eingeben",
+            "PhoneNumber" : "Telefonnummer eingeben",
+            "Password" : "Passwort eingeben",
+            "VerifyCode" : "Bestätigungscode eingeben",
+            "TopSearch" : "Datei suchen",
+            "Address" : "Adresse eingeben"
+        },
+        "ALERTS" : {
+            "FirstNameInputAlert" : "Bitte geben Sie den Vornamen ein",
+            "LastNameInputAlert" : "Bitte geben Sie den Nachnamen ein",
+            "EmailInputAlert" : "Bitte E-Mail ausfüllen",
+            "PhoneNumberInputAlert" : "Bitte geben Sie die Telefonnummer ein",
+            "PasswordInputAlert" : "Bitte geben Sie das Passwort ein",
+            "VerifyCodeInputAlert" : "Bitte Verifizierungscode eingeben",
+            "RegistrationSuccessful" : "Registrierung erfolgreich",
+            "WrongInfo" : "Bitte überprüfen Sie Ihre E-Mail oder Ihr Passwort",
+            "PasswordReset" : "Passwort zurücksetzen erfolgreich!",
+            "PasswordLength" : "Passwortlänge muss größer als 6 sein",
+            "ProfileSuccess" : "Aktualisiere dein Profil erfolgreich",
+            "ValidateAlert" : "Bitte überprüfen Sie Ihre Eingabedaten",
+            "Logout" : "Ausloggen",
+            "LogoutConfirm" : "Bist du dir sicher? Sie möchten sich abmelden?"
+        }
+    }
+}
